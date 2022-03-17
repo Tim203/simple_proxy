@@ -4,7 +4,7 @@ defmodule SimpleProxy.ConnectProxy do
 
   @http_port 80
   @https_port 443
-  @basic_auth String.to_charlist("Basic " <> Base.encode64("test123:$fhgj@xva"))
+  @basic_auth String.to_charlist("Basic " <> Application.get_env(:simple_proxy, :auth))
 
   def child_spec(opts),
     do: %{
@@ -122,9 +122,7 @@ defmodule SimpleProxy.ConnectProxy do
     end
   end
 
-  def do_proxy({socket, method, host, port, path, headers} = request) do
-    print_connecting(request)
-
+  def do_proxy({socket, method, host, port, path, headers}) do
     if !check_auth(List.keyfind(headers, :"Proxy-Authorization", 0)) do
       :gen_tcp.send(socket, "HTTP/1.0 401 Unauthorized\r\n\r\n")
       :gen_tcp.close(socket)
@@ -189,10 +187,5 @@ defmodule SimpleProxy.ConnectProxy do
         :gen_tcp.close(from_socket)
         :gen_tcp.close(to)
     end
-  end
-
-  def print_connecting({socket, method, host, port, path, _headers}) do
-    {:ok, {address, _}} = :inet.peername(socket)
-    IO.puts("[#{inspect :erlang.date()}] connect from #{inspect address} to #{inspect {host, port}} (#{method} : #{path})")
   end
 end
