@@ -20,7 +20,7 @@ defmodule SimpleProxy.Telemetry do
         "simple_proxy.metrics.requests",
         event_name: [:simple_proxy, :metrics, :requests],
         measurement: :add,
-        tags: [:source, :target]
+        tags: [:source, :target, :using]
       ),
       counter(
         "simple_proxy.metrics.requests.local",

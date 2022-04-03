@@ -139,7 +139,7 @@ defmodule SimpleProxy.ConnectProxy do
       end
 
       {:ok, proxy} = :gen_tcp.connect(host, port, [{:ip, our_ip} | @tcp_options])
-      :telemetry.execute([:simple_proxy, :metrics, :requests], %{add: 1}, %{source: get_ip_as_string(socket), target: host})
+      :telemetry.execute([:simple_proxy, :metrics, :requests], %{add: 1}, %{source: get_ip_as_string(socket), target: host, using: ip_as_string(our_ip)})
 
       case method do
         'CONNECT' ->
